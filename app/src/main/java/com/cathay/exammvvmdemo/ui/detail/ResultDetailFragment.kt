@@ -100,8 +100,6 @@ class ResultDetailFragment : ToolbarFragment() {
     override fun initView() {
         super.initView()
         setToolbarTitle("Result Detail")
-        binding.previous.visibility = if (position == 0) View.GONE else View.VISIBLE
-        binding.next.visibility = if (position == 0) View.GONE else View.VISIBLE
         viewModel.requestExam(position)
     }
 

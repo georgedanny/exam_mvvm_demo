@@ -117,11 +117,6 @@ class AnswerFragment : ToolbarFragment() {
         super.initView()
         setToolbarTitle("Answer")
         viewModel.requestExam(position)
-
-        binding.previous.visibility = if (position == 0) View.GONE else View.VISIBLE
-        binding.next.visibility = if (position == 0) View.GONE else View.VISIBLE
-
-
     }
 
     private fun setCheckBoxListen(){

@@ -76,6 +76,8 @@ class HomeFragment : ToolbarFragment() {
             nav().navigate(R.id.action_navigation_home_to_navigation_result)
         }
 
+        setBackPress { requireActivity().finish() }
+
     }
 
 

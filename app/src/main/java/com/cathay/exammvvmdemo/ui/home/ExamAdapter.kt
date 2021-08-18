@@ -51,7 +51,7 @@ class ExamAdapter(var mutableList: MutableList<ExamEntity>): RecyclerView.Adapte
                 itemBinding.answer.setTextColor(ContextCompat.getColor(itemBinding.root.context, R.color.black))
             }else{
                 if (showAns)itemBinding.answer.text = sortOutData(bean.ans)
-                itemBinding.answer.setTextColor(ContextCompat.getColor(itemBinding.root.context, R.color.purple_200))
+                itemBinding.answer.setTextColor(ContextCompat.getColor(itemBinding.root.context, R.color.teal_200))
             }
             itemBinding.userAnswer.text = sortOutData(bean.userAns)
             itemBinding.topic.text = bean.topic
