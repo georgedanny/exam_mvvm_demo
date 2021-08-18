@@ -13,21 +13,21 @@ object DataUtil {
         exam1.options = "[數字0,數字1,數字9,數字10]"
 
         val exam2 = ExamRoomDao()
-        exam2.topic = "下列日常生活應用中，何者會使用到電腦？(選擇二項)"
+        exam2.topic = "下列日常生活應用中，何者是遊戲機？"
         exam2.userAns = ",,,"
-        exam2.ans = "1,3"
+        exam2.ans = "3"
         exam2.options = "[數位相機,省電日光燈,Xbox,三速電風扇]"
 
         val exam3 = ExamRoomDao()
-        exam3.topic = "下列日常生活應用中，何者會使用到電腦？(選擇二項)"
+        exam3.topic = "下列日常生活應用中，何者會使用到藍芽？"
         exam3.userAns = ",,,"
-        exam3.ans = "2,3"
+        exam3.ans = "3"
         exam3.options = "[腳踏車,提款機,冷氣機,點滴注射]"
 
         val exam4 = ExamRoomDao()
-        exam4.topic = "下列日常生活應用中，何者會使用到電腦？(選擇二項)"
+        exam4.topic = "下列日常生活應用中，那些會用到電？(選擇三項)"
         exam4.userAns = ",,,"
-        exam4.ans = "3,4"
+        exam4.ans = "1,2,4"
         exam4.options = "[電腦桌,鍵盤,售票機,手機]"
 
         val exam5 = ExamRoomDao()
