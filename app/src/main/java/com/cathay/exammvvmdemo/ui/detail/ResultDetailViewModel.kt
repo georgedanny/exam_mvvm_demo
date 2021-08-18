@@ -17,10 +17,6 @@ class ResultDetailViewModel(private val repo: ExamRepo): ViewModel() {
 
     val liveExamInfo: LiveData<ExamEntity> = _liveExamInfo
 
-    private val _checkListLive = MutableLiveData<MutableList<Boolean>>()
-
-    val checkListLive: LiveData<MutableList<Boolean>> = _checkListLive
-
     private val _previousStateLive = MutableLiveData<Int>()
 
     val previousStateLive: LiveData<Int> = _previousStateLive
@@ -29,8 +25,7 @@ class ResultDetailViewModel(private val repo: ExamRepo): ViewModel() {
 
     val nextStateLive: LiveData<Int> = _nextStateLive
 
-    private var checkDatas = mutableListOf<Boolean>()
-
+    //get Exam Data
     fun requestExam(position:Int){
         viewModelScope.launch{
             if(position >= 0){
@@ -47,17 +42,7 @@ class ResultDetailViewModel(private val repo: ExamRepo): ViewModel() {
         }
     }
 
-    fun initCheckList(list:MutableList<Boolean>){
-        checkDatas = list
-    }
-
-    fun updateCheckState(position: Int){
-        checkDatas.apply {
-            set(position,!checkDatas[position])
-        }
-        _checkListLive.postValue(checkDatas)
-    }
-
+    //update checkbox check state
     private fun updateButtonState(position: Int, size:Int){
         if (position == 0){
             _previousStateLive.postValue(View.GONE)

@@ -17,6 +17,7 @@ class HomeViewModel(private val repo: ExamRepo) : ViewModel() {
 
     val liveExamInfo: LiveData<List<ExamEntity>> = _liveExamInfo
 
+    //get Exam list Data
     fun requestExams(){
         viewModelScope.launch{
             repo.fetchExams()

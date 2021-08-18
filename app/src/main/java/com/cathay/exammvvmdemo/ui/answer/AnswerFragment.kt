@@ -20,9 +20,10 @@ import java.util.zip.Inflater
 class AnswerFragment : ToolbarFragment() {
 
     private lateinit var viewModel: AnswerViewModel
-    private var position:Int = 0
     private lateinit var binding: FragmentAnswerBinding
+    private var position:Int = 0
     private val checkBoxs = mutableListOf<CheckBox>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -36,8 +37,11 @@ class AnswerFragment : ToolbarFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        //init viewMode factory
         viewModel =
             ViewModelProvider(this, AnswerFactory(requireContext())).get(AnswerViewModel::class.java)
+
+        //init data binding
         binding = FragmentAnswerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,19 +49,35 @@ class AnswerFragment : ToolbarFragment() {
 
 
     override fun Observe() {
+        //observe exam data
         viewModel.liveExamInfo.observe(viewLifecycleOwner, {
+            val options = JSONArray(it.options)
             binding.topic.text = it.topic
+            checkBoxs.clear()
+            binding.topicContainer.removeAllViews()
+            val data = mutableListOf<Boolean>()
+            (0 until options.length()).map {
+                val view  =  layoutInflater.inflate(R.layout.item_choise,null)
+                binding.topicContainer.addView(view)
+                val checkbox = view.findViewById<CheckBox>(R.id.check)
+                val item = view.findViewById<TextView>(R.id.item)
+                checkBoxs.add(checkbox)
+                item.text = (it+1).toString()+"."
+                data.add(it,false)
+            }
+
+            viewModel.initCheckList(data)
+            setCheckBoxListen()
+
             it.userAns?.apply {
-
                 val array = split(",")
-
-                val options = JSONArray(it.options)
                 checkBoxs.mapIndexed { index, checkBox ->
                     checkBox.text = options.getString(index)
-                    checkBox.isChecked = false
                 }
+
                 if (array.isNotEmpty()){
                     array.mapIndexed { index, s ->
+                        Log.d("Ryan","s = $s")
                         if (s == "1" || s == "2" || s == "3" || s == "4"){
                             checkBoxs[index].isChecked = true
                         }
@@ -66,20 +86,18 @@ class AnswerFragment : ToolbarFragment() {
             }
         })
 
-        viewModel.checkListLive.observe(viewLifecycleOwner,{
-
-        })
-
+        //observe previous button state
         viewModel.previousStateLive.observe(viewLifecycleOwner,{
             binding.previous.visibility = it
         })
 
+        //observe next button state
         viewModel.nextStateLive.observe(viewLifecycleOwner,{
             binding.next.visibility = it
         })
 
+        //observe save answer finish
         viewModel.saveLive.observe(viewLifecycleOwner,{
-
             when(it){
                 ClickType.MINUS->{
                     viewModel.requestExam(--position)
@@ -94,24 +112,11 @@ class AnswerFragment : ToolbarFragment() {
         })
     }
 
+
     override fun initView() {
         super.initView()
         setToolbarTitle("Answer")
         viewModel.requestExam(position)
-
-        (0..3).map {
-            val view  =  layoutInflater.inflate(R.layout.item_choise,null)
-            binding.topicContainer.addView(view)
-            val checkbox = view.findViewById<CheckBox>(R.id.check)
-            val item = view.findViewById<TextView>(R.id.item)
-            checkBoxs.add(checkbox)
-            item.text = (it+1).toString()+"."
-        }
-        val data = mutableListOf<Boolean>()
-        (0..3).map {
-            data.add(false)
-        }
-        viewModel.initCheckList(data)
 
         binding.previous.visibility = if (position == 0) View.GONE else View.VISIBLE
         binding.next.visibility = if (position == 0) View.GONE else View.VISIBLE
@@ -119,13 +124,17 @@ class AnswerFragment : ToolbarFragment() {
 
     }
 
-    override fun listen() {
-        super.listen()
+    private fun setCheckBoxListen(){
         checkBoxs.mapIndexed { index, checkBox ->
             checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                 viewModel.updateCheckState(index)
             }
         }
+    }
+
+    override fun listen() {
+        super.listen()
+        setCheckBoxListen()
 
         binding.next.setOnClickListener {
             viewModel.requestSaveAnswer(ClickType.PLUS)

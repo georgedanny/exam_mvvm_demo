@@ -48,17 +48,27 @@ class ResultDetailFragment : ToolbarFragment() {
 
     override fun Observe() {
         viewModel.liveExamInfo.observe(viewLifecycleOwner, {
+            val options = JSONArray(it.options)
             binding.topic.text = it.topic
-            it.userAns?.apply {
+            checkBoxs.clear()
+            binding.topicContainer.removeAllViews()
 
+            (0 until options.length()).map {
+                val view  =  layoutInflater.inflate(R.layout.item_choise,null)
+                binding.topicContainer.addView(view)
+                val checkbox = view.findViewById<CheckBox>(R.id.check)
+                val item = view.findViewById<TextView>(R.id.item)
+                checkbox.isEnabled = false
+                checkBoxs.add(checkbox)
+                item.text = (it+1).toString()+"."
+            }
+
+            it.userAns?.apply {
                 val array = split(",")
-                val options = JSONArray(it.options)
                 checkBoxs.mapIndexed { index, checkBox ->
                     checkBox.text = options.getString(index)
                     checkBox.isChecked = false
                 }
-
-
                 if (array.isNotEmpty()) {
                     array.mapIndexed { index, s ->
                         if (s == "1" || s == "2" || s == "3" || s == "4") {
@@ -90,26 +100,8 @@ class ResultDetailFragment : ToolbarFragment() {
     override fun initView() {
         super.initView()
         setToolbarTitle("Result Detail")
-
-        (0..3).map {
-            val view = layoutInflater.inflate(R.layout.item_choise, null)
-            val checkbox = view.findViewById<CheckBox>(R.id.check)
-            val item = view.findViewById<TextView>(R.id.item)
-            checkbox.isEnabled = false
-            checkBoxs.add(checkbox)
-            item.text = (it + 1).toString() + "."
-            binding.topicContainer.addView(view)
-
-        }
-        val data = mutableListOf<Boolean>()
-        (0..3).map {
-            data.add(false)
-        }
-        viewModel.initCheckList(data)
-
         binding.previous.visibility = if (position == 0) View.GONE else View.VISIBLE
         binding.next.visibility = if (position == 0) View.GONE else View.VISIBLE
-
         viewModel.requestExam(position)
     }
 

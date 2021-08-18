@@ -9,9 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.transform
 
-class ExamRepo( private val roomDao: RoomDao) {
+class ExamRepo(private val roomDao: RoomDao) {
 
+    //get DB exam data
     fun fetchExams(): Flow<MutableList<ExamEntity>> {
         return flow<MutableList<ExamEntity>> {
             val exams = roomDao.getAll()
@@ -29,17 +31,19 @@ class ExamRepo( private val roomDao: RoomDao) {
         }.flowOn(Dispatchers.IO)
     }
 
-    fun resetDefaultTable():Flow<Unit>{
+    //rest DB data to default
+    fun resetDefaultTable(): Flow<Unit> {
         return flow<Unit> {
             roomDao.clearTable()
             emit(Unit)
         }.flowOn(Dispatchers.IO)
     }
 
-    fun saveAnswer(entity: ExamEntity):Flow<Unit>{
+    //Save Ans To DB
+    fun saveAnswer(entity: ExamEntity): Flow<Unit> {
         return flow<Unit> {
             Gson().apply {
-                val dao =  fromJson(toJson(entity),ExamRoomDao::class.java)
+                val dao = fromJson(toJson(entity), ExamRoomDao::class.java)
                 emit(roomDao.update(dao))
             }
 
@@ -47,22 +51,19 @@ class ExamRepo( private val roomDao: RoomDao) {
         }.flowOn(Dispatchers.IO)
     }
 
-
+    //Transform List<ExamRoomDao> to MutableList<ExamEntity>
     private fun trans(exams: List<ExamRoomDao>): MutableList<ExamEntity> {
-        val examEntityList = mutableListOf<ExamEntity>()
-        exams.map {
-            val examEntity = ExamEntity()
-            examEntity.id = it.id
-            examEntity.topic = it.topic
-            examEntity.ans = it.ans
-            examEntity.userAns = it.userAns
-            examEntity.options = it.options
-            examEntityList.add(examEntity)
-        }
-        return examEntityList
+        return exams.map {
+            ExamEntity().apply {
+                id = it.id
+                topic = it.topic
+                ans = it.ans
+                userAns = it.userAns
+                options = it.options
+            }
+        }.toMutableList()
+
     }
-
-
 
 
 }

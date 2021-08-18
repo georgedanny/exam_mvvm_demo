@@ -50,9 +50,10 @@ class ResultFragment : ToolbarFragment() {
     }
 
     override fun Observe() {
+        //observe exam data
         viewModel.liveExamInfo.observe(viewLifecycleOwner, {
 
-            examAdapter?.setData(it as MutableList<ExamEntity>,true)
+            examAdapter?.setData(it as MutableList<ExamEntity>, true)
 
             var score = 0
             it.map { exam ->
@@ -63,6 +64,7 @@ class ResultFragment : ToolbarFragment() {
             binding.score.text = getString(R.string.score, score)
         })
 
+        //observe Reset DB finish
         viewModel.liveResetTable.observe(viewLifecycleOwner, {
             nav().navigateUp()
         })
@@ -83,7 +85,6 @@ class ResultFragment : ToolbarFragment() {
             bundle.putInt(HomeFragment.POSITION, i)
             nav().navigate(R.id.action_navigation_result_to_navigation_result_detail, bundle)
         }
-
 
         setNavigationHomeClickListen {
             showAlert()
@@ -108,6 +109,4 @@ class ResultFragment : ToolbarFragment() {
             }
             .show()
     }
-
-
 }

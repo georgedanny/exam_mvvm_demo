@@ -28,13 +28,12 @@ import kotlin.concurrent.thread
 
 class HomeFragment : ToolbarFragment() {
     private lateinit var binding: FragmentHomeBinding
-
     private lateinit var homeViewModel: HomeViewModel
-    private  var  data = mutableListOf<ExamEntity>()
-    private var examAdapter:ExamAdapter? = null
+    private var data = mutableListOf<ExamEntity>()
+    private var examAdapter: ExamAdapter? = null
 
-    companion object{
-        const val POSITION ="POSITION"
+    companion object {
+        const val POSITION = "POSITION"
     }
 
     override fun initContentView(
@@ -43,17 +42,17 @@ class HomeFragment : ToolbarFragment() {
         savedInstanceState: Bundle?
     ): View {
         homeViewModel =
-            ViewModelProvider(this,HomeFactory(requireContext())).get(HomeViewModel::class.java)
+            ViewModelProvider(this, HomeFactory(requireContext())).get(HomeViewModel::class.java)
 
-        binding = FragmentHomeBinding.inflate(inflater,container,false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-
     override fun Observe() {
-    homeViewModel.liveExamInfo.observe(viewLifecycleOwner,{
-        examAdapter?.setData(it as MutableList<ExamEntity>)
-    })
+        //observe exam data
+        homeViewModel.liveExamInfo.observe(viewLifecycleOwner, {
+            examAdapter?.setData(it as MutableList<ExamEntity>)
+        })
     }
 
     override fun initView() {
@@ -70,10 +69,9 @@ class HomeFragment : ToolbarFragment() {
         examAdapter?.setOnItemClickListener { i, view, any ->
             val bundle = Bundle()
             bundle.putInt(POSITION, i)
-            nav().navigate(R.id.action_navigation_home_to_navigation_answer,bundle)
+            nav().navigate(R.id.action_navigation_home_to_navigation_answer, bundle)
 
         }
-
         binding.submit.setOnClickListener {
             nav().navigate(R.id.action_navigation_home_to_navigation_result)
         }

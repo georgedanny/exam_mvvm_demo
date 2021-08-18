@@ -21,6 +21,7 @@ class ResultViewModel(private val repo: ExamRepo) : ViewModel() {
 
     val liveResetTable: LiveData<Unit> = _liveResetTable
 
+    //get Exam list Data
     fun requestExams(){
         viewModelScope.launch{
             repo.fetchExams()
@@ -33,6 +34,7 @@ class ResultViewModel(private val repo: ExamRepo) : ViewModel() {
         }
     }
 
+    // reset db data to default
     fun requestReset(){
         viewModelScope.launch{
             repo.resetDefaultTable()

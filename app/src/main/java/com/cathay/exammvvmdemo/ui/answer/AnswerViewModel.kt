@@ -19,10 +19,6 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
 
     val liveExamInfo: LiveData<ExamEntity> = _liveExamInfo
 
-    private val _checkListLive = MutableLiveData<MutableList<Boolean>>()
-
-    val checkListLive: LiveData<MutableList<Boolean>> = _checkListLive
-
     private val _previousStateLive = MutableLiveData<Int>()
 
     val previousStateLive: LiveData<Int> = _previousStateLive
@@ -37,10 +33,10 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
 
     private var checkDatas = mutableListOf<Boolean>()
 
-
-    fun requestExam(position:Int){
-        viewModelScope.launch{
-            if(position >= 0){
+    //get Exam Data
+    fun requestExam(position: Int) {
+        viewModelScope.launch {
+            if (position >= 0) {
                 repo.fetchExams()
                     .catch {
                         Log.e("Ryan", Log.getStackTraceString(it))
@@ -48,31 +44,31 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
                     .collect {
                         val exam = it[position]
                         _liveExamInfo.postValue(exam)
-                        updateButtonState(position,it.size)
+                        updateButtonState(position, it.size)
                     }
             }
         }
     }
 
-    fun requestSaveAnswer(clickType: ClickType){
-    viewModelScope.launch {
-        _liveExamInfo.value?.let {entity->
-            val ans = StringBuilder()
-            val array = mutableListOf("1","2","3","4")
-            checkDatas.mapIndexed { index, b ->
-                if (b){
-                    ans.append(array[index])
+    //Save Answer to DB
+    fun requestSaveAnswer(clickType: ClickType) {
+        viewModelScope.launch {
+            _liveExamInfo.value?.let { entity ->
+                val ans = StringBuilder()
+                val array = mutableListOf("1", "2", "3", "4")
+                checkDatas.mapIndexed { index, b ->
+                    if (b) {
+                        ans.append(array[index])
+                    }
+                    if (index < array.size - 1) {
+                        ans.append(",")
+                    }
                 }
-                if (index < array.size-1){
-                    ans.append(",")
+                entity.userAns = ans.toString()
+                repo.saveAnswer(entity).collect {
+                    Log.d("Ryan", "save success")
+                    _saveLive.postValue(clickType)
                 }
-            }
-            entity.userAns = ans.toString()
-            repo.saveAnswer(entity).collect {
-                Log.d("Ryan","save success")
-                _saveLive.postValue(clickType)
-            }
-
             }
         }
     }
@@ -81,23 +77,24 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
         checkDatas = list
     }
 
-    fun updateCheckState(position: Int){
+    //update checkbox check state
+    fun updateCheckState(position: Int) {
         checkDatas.apply {
-            set(position,!checkDatas[position])
+            set(position, !checkDatas[position])
         }
-        _checkListLive.postValue(checkDatas)
     }
 
-    private fun updateButtonState(position: Int, size:Int){
-        if (position == 0){
+    //update previous next button state
+    private fun updateButtonState(position: Int, size: Int) {
+        if (position == 0) {
             _previousStateLive.postValue(View.GONE)
-        }else{
+        } else {
             _previousStateLive.postValue(View.VISIBLE)
         }
 
-        if (position == size-1){
+        if (position == size - 1) {
             _nextStateLive.postValue(View.GONE)
-        }else{
+        } else {
             _nextStateLive.postValue(View.VISIBLE)
         }
     }
