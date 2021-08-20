@@ -110,6 +110,16 @@ class AnswerFragment : ToolbarFragment() {
                 }
             }
         })
+
+        viewModel.updateCheckStateLive.observe(viewLifecycleOwner,{
+            removeCheckChangeListen()
+            checkBoxs.mapIndexed { index, checkBox ->
+                if (index != it){
+                    checkBox.isChecked = false
+                }
+            }
+            setCheckBoxListen()
+        })
     }
 
 
@@ -124,6 +134,12 @@ class AnswerFragment : ToolbarFragment() {
             checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                 viewModel.updateCheckState(index)
             }
+        }
+    }
+
+    private fun removeCheckChangeListen(){
+        checkBoxs.map {  checkBox ->
+            checkBox.setOnCheckedChangeListener(null)
         }
     }
 

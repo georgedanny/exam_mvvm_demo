@@ -11,6 +11,7 @@ class ExamRoomDao{
     var ans: String = ""
     var options: String = ""
     var isCorrect: Boolean = true
+    var isSingle: Boolean = false
 
 }
 

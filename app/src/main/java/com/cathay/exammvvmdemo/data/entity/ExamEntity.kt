@@ -10,6 +10,7 @@ data class ExamEntity(
     var userAns: String? = null,
     var ans: String? = null,
     var options: String? = null,
+    var isSingle: Boolean = false,
 
 ): Parcelable {
 

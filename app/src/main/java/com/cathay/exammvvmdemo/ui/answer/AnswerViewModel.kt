@@ -27,6 +27,10 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
 
     val nextStateLive: LiveData<Int> = _nextStateLive
 
+    private val _updateCheckStateLive = MutableLiveData<Int>()
+
+    val updateCheckStateLive: LiveData<Int> = _updateCheckStateLive
+
     private val _saveLive = MutableLiveData<ClickType>()
 
     val saveLive: LiveData<ClickType> = _saveLive
@@ -79,6 +83,14 @@ class AnswerViewModel(val repo: ExamRepo) : ViewModel() {
 
     //update checkbox check state
     fun updateCheckState(position: Int) {
+        _liveExamInfo.value?.let {
+            if (it.isSingle){
+                _updateCheckStateLive.postValue(position)
+                checkDatas.mapIndexed { index, b ->
+                    checkDatas.set(index,false)
+                }
+            }
+        }
         checkDatas.apply {
             set(position, !checkDatas[position])
         }
